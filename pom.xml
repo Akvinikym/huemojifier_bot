@@ -34,7 +34,7 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>WorkerProcess</mainClass>
+                            <mainClass>Program</mainClass>
                             <name>worker</name>
                         </program>
                         <program>
