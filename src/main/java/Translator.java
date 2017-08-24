@@ -1,15 +1,18 @@
 import java.util.HashMap;
+import java.util.Map;
 
 class Translator {
 
+    private static final int MaximumMordorLetterLength = 6;
+
     private static HashMap<String, String> dict = new HashMap<String, String>() {{
         put("А", "/-\\");
-        put("Б", "8");
+        put("Б", "6");
         put("В", "|3");
         put("Г", "r");
         put("Д", "_/\\_");
         put("Е", "€");
-        put("Ё", "€");
+        put("Ё", "€'");
         put("Ж", ">|<");
         put("З", "3");
         put("И", "|/|");
@@ -39,18 +42,53 @@ class Translator {
         put(" ", " ");
     }};
 
-    static String translate(String input) {
+    static String translateFromRussian(String input) {
         String[] inArr = input.split("");
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (String letter : inArr) {
             String translated = dict.containsKey(letter.toUpperCase()) ? dict.get(letter.toUpperCase()) : "";
             if (translated.equals("")) {
-                output += letter;
+                output.append(letter);
             }
             else {
-                output += dict.get(letter.toUpperCase());
+                output.append(dict.get(letter.toUpperCase()));
             }
         }
-        return output;
+        return output.toString();
+    }
+
+    static String translateToRussian(String input) {
+        String[] inArr = input.split("");
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < inArr.length; i++) {
+            String candidateLetter = "";
+            int inArrCurrentPos = i;
+            boolean letterIsFound = false;
+
+            // Loop until we get a letter or reach the longest possible size
+            for (int j = 0; j < MaximumMordorLetterLength; j++) {
+                // Append another symbol from the input to candidate letter
+                // If we get a proper letter, take it, otherwise continue
+                candidateLetter += inArr[inArrCurrentPos];
+                if (dict.containsValue(candidateLetter)) {
+                    letterIsFound = true;
+                    for (Map.Entry<String, String> entry : dict.entrySet()) {
+                        if (entry.getValue().equals(candidateLetter)) {
+                            out.append(entry.getKey());
+                            break;
+                        }
+                    }
+                    break;
+                }
+                if (++inArrCurrentPos == inArr.length)
+                    break;
+            }
+            if (letterIsFound)
+                i = inArrCurrentPos;
+            else {
+                out.append(inArr[i]);
+            }
+        }
+        return out.toString();
     }
 }
