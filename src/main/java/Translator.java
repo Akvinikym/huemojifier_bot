@@ -42,7 +42,7 @@ class Translator {
         put(" ", " ");
     }};
 
-    static String translateFromRussian(String input) {
+    static String translateToMorlang(String input) {
         String[] inArr = input.split("");
         StringBuilder output = new StringBuilder();
         for (String letter : inArr) {
@@ -57,7 +57,7 @@ class Translator {
         return output.toString();
     }
 
-    static String translateToRussian(String input) {
+    static String translateFromMorlang(String input) {
         String[] inArr = input.split("");
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < inArr.length; i++) {
