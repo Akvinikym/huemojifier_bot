@@ -59,8 +59,8 @@ class Translator {
         put("J", "_)");
         put("K", "|(");
         put("L", "|_");
-        put("M", "/\\");
-        put("N", "|\\/|");
+        put("M", "/\\/\\");
+        put("N", "|\\|");
         put("O", "0");
         put("P", "P");
         put("Q", "0,");
