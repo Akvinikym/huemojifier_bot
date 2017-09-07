@@ -3,9 +3,14 @@ import java.util.Map;
 
 class Translator {
 
+    public enum Language {
+        Russian,
+        English
+    };
+
     private static final int MaximumMordorLetterLength = 6;
 
-    private static HashMap<String, String> dict = new HashMap<String, String>() {{
+    private static HashMap<String, String> rusDict = new HashMap<String, String>() {{
         put("А", "/-\\");
         put("Б", "6");
         put("В", "|3");
@@ -39,12 +44,41 @@ class Translator {
         put("Э", "-)");
         put("Ю", "|-0");
         put("Я", "9|");
-        put(" ", " ");
     }};
 
-    static String translateToMorlang(String input) {
+    private static HashMap<String, String> enDict = new HashMap<String, String>() {{
+        put("А", "@");
+        put("B", "8");
+        put("C", "C");
+        put("D", "|)");
+        put("E", "3");
+        put("F", "|=");
+        put("G", "G");
+        put("H", "|-|");
+        put("I", "i");
+        put("J", "_)");
+        put("K", "|(");
+        put("L", "|_");
+        put("M", "/\\");
+        put("N", "|\\/|");
+        put("O", "0");
+        put("P", "P");
+        put("Q", "0,");
+        put("R", "Я");
+        put("S", "$");
+        put("T", "7");
+        put("U", "U");
+        put("V", "\\/");
+        put("W", "\\/\\/");
+        put("X", "><");
+        put("Y", "`/");
+        put("Z", "7_");
+    }};
+
+    static String translateToMorlang(String input, Language inLanguage) {
         String[] inArr = input.split("");
         StringBuilder output = new StringBuilder();
+        HashMap<String, String> dict = inLanguage == Language.Russian ? rusDict : enDict;
         for (String letter : inArr) {
             String translated = dict.containsKey(letter.toUpperCase()) ? dict.get(letter.toUpperCase()) : "";
             if (translated.equals("")) {
@@ -57,9 +91,10 @@ class Translator {
         return output.toString();
     }
 
-    static String translateFromMorlang(String input) {
+    static String translateFromMorlang(String input, Language outLanguage) {
         String[] inArr = input.split("");
         StringBuilder out = new StringBuilder();
+        HashMap<String, String> dict = outLanguage == Language.Russian ? rusDict : enDict;
         for (int i = 0; i < inArr.length; i++) {
             String candidateLetter = "";
             int inArrCurrentPos = i;

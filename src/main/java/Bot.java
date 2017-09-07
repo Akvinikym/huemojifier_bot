@@ -14,13 +14,10 @@ import java.util.ArrayList;
 
 public class Bot extends TelegramLongPollingBot {
 
-    private final String TranslateToMorlanCommand = "/translate_to";
-    private final String TranslateFromMorlangCommand = "/translate_from";
-    private final String TranslateToInlineCommand = "to";
-    private final String TranslateFromInlineCommand = "from";
-    
-    private boolean translationToMorlangWasRequested = false;
-    private boolean translationFromMorlangWasRequested = false;
+    private final String TranslateToFromRusInlineCommand = "ru_to";
+    private final String TranslateToFromEnInlineCommand = "en_to";
+    private final String TranslateFromToRusInlineCommand = "from_ru";
+    private final String TranslateFromToEnInlineCommand = "from_en";
 
     public void onUpdateReceived(Update update) {
         try {
@@ -34,8 +31,9 @@ public class Bot extends TelegramLongPollingBot {
                 InlineQueryResult translatedResponse;
                 ArrayList<InlineQueryResult> responseInList = new ArrayList<InlineQueryResult>();
 
-                if (inputMessage.substring(0, 2).equals(TranslateToInlineCommand)) {
-                    translatedMessage = Translator.translateToMorlang(inputMessage.substring(3));
+                if (inputMessage.substring(0, 5).equals(TranslateToFromRusInlineCommand)) {
+                    translatedMessage = Translator.translateToMorlang(
+                            inputMessage.substring(6), Translator.Language.Russian);
                     translatedResponse = new InlineQueryResultArticle()
                             .setInputMessageContent(new InputTextMessageContent()
                                     .setMessageText(translatedMessage))
@@ -46,8 +44,35 @@ public class Bot extends TelegramLongPollingBot {
                             .setResults(responseInList)
                             .setInlineQueryId(update.getInlineQuery().getId());
                 }
-                else if (inputMessage.substring(0, 4).equals(TranslateFromInlineCommand)) {
-                    translatedMessage = Translator.translateFromMorlang(inputMessage.substring(5));
+                else if (inputMessage.substring(0, 5).equals(TranslateToFromEnInlineCommand)) {
+                    translatedMessage = Translator.translateToMorlang(
+                            inputMessage.substring(6), Translator.Language.English);
+                    translatedResponse = new InlineQueryResultArticle()
+                            .setInputMessageContent(new InputTextMessageContent()
+                                    .setMessageText(translatedMessage))
+                            .setId("1488")
+                            .setTitle(translatedMessage);
+                    responseInList.add(translatedResponse);
+                    finalAnswer = new AnswerInlineQuery()
+                            .setResults(responseInList)
+                            .setInlineQueryId(update.getInlineQuery().getId());
+                }
+                else if (inputMessage.substring(0, 7).equals(TranslateFromToRusInlineCommand)) {
+                    translatedMessage = Translator.translateFromMorlang(
+                            inputMessage.substring(8), Translator.Language.Russian);
+                    translatedResponse = new InlineQueryResultArticle()
+                            .setInputMessageContent(new InputTextMessageContent()
+                                    .setMessageText(translatedMessage))
+                            .setId("1488")
+                            .setTitle(translatedMessage);
+                    responseInList.add(translatedResponse);
+                    finalAnswer = new AnswerInlineQuery()
+                            .setResults(responseInList)
+                            .setInlineQueryId(update.getInlineQuery().getId());
+                }
+                else if (inputMessage.substring(0, 7).equals(TranslateFromToEnInlineCommand)) {
+                    translatedMessage = Translator.translateFromMorlang(
+                            inputMessage.substring(8), Translator.Language.English);
                     translatedResponse = new InlineQueryResultArticle()
                             .setInputMessageContent(new InputTextMessageContent()
                                     .setMessageText(translatedMessage))
@@ -71,37 +96,6 @@ public class Bot extends TelegramLongPollingBot {
                             .setInlineQueryId(update.getInlineQuery().getId());
                 }
                 answerInlineQuery(finalAnswer);
-            }
-            else if (update.hasMessage() && update.getMessage().hasText()) {
-                if (translationFromMorlangWasRequested) {
-                    message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText(Translator.translateFromMorlang(update.getMessage().getText()));
-                    translationFromMorlangWasRequested = false;
-                } else if (translationToMorlangWasRequested) {
-                    message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText(Translator.translateToMorlang(update.getMessage().getText()));
-                    translationToMorlangWasRequested = false;
-                } else if (update.getMessage().getText().split(" ")[0].equals(TranslateToMorlanCommand)) {
-                    translationToMorlangWasRequested = true;
-                    message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText("Now, send me a phrase");
-                } else if (update.getMessage().getText().split(" ")[0].equals(TranslateFromMorlangCommand)) {
-                    translationFromMorlangWasRequested = true;
-                    message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText("Now, send me a phrase");
-                } else
-                    message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText("Please, use commands");
-                try {
-                    sendMessage(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
             }
         } catch (StringIndexOutOfBoundsException e) {
             e.printStackTrace();
