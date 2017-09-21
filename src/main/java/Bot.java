@@ -54,11 +54,13 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public String getBotUsername() {
-        return "MordorLanguageBot";
+        // Your bot's username
+        return "foo";
     }
 
     public String getBotToken() {
-        return "355829748:AAGr8YBz7RpKbs2Z6DCazQkyXYjWCQLOfrY";
+        // Your bot's token
+        return "foo";
     }
 
 }
