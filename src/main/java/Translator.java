@@ -1,13 +1,14 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class Translator {
 
     public enum Language {
         Russian,
-        English
-    };
-
+        English,
+    }
     private static final int MaximumMordorLetterLength = 6;
 
     private static HashMap<String, String> rusDict = new HashMap<String, String>() {{
@@ -45,7 +46,6 @@ class Translator {
         put("Ю", "|-0");
         put("Я", "9|");
     }};
-
     private static HashMap<String, String> enDict = new HashMap<String, String>() {{
         put("А", "@");
         put("B", "8");
@@ -75,7 +75,18 @@ class Translator {
         put("Z", "7_");
     }};
 
-    static String translateToMorlang(String input, Language inLanguage) {
+    static List<String> translate(String s) {
+        ArrayList<String> translations = new ArrayList<String>();
+
+        // Not a cycle, because we have two functions. Could be, if we had more
+        translations.add(translateToMorlang(s, Language.Russian));
+        translations.add(translateToMorlang(s, Language.English));
+        translations.add(translateFromMorlang(s, Language.Russian));
+        translations.add(translateFromMorlang(s, Language.English));
+        return translations;
+    }
+
+    private static String translateToMorlang(String input, Language inLanguage) {
         String[] inArr = input.split("");
         StringBuilder output = new StringBuilder();
         HashMap<String, String> dict = inLanguage == Language.Russian ? rusDict : enDict;
@@ -91,7 +102,7 @@ class Translator {
         return output.toString();
     }
 
-    static String translateFromMorlang(String input, Language outLanguage) {
+    private static String translateFromMorlang(String input, Language outLanguage) {
         String[] inArr = input.split("");
         StringBuilder out = new StringBuilder();
         HashMap<String, String> dict = outLanguage == Language.Russian ? rusDict : enDict;
