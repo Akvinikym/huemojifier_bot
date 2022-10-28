@@ -6,8 +6,7 @@
 import logging
 from utils.huificator import Huify
 from utils.emojificator import Emojify
-from telegram import __version__ as TG_VER
-from telegram import ForceReply, Update
+from telegram import Update, MessageEntity, constants
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 
@@ -32,9 +31,12 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Echo the user message."""
-    # await update.message.reply_text(update.message.text)
-    await update.message.reply_text(Huify(update.message.text))
+    """Process user message."""
+    huification = Huify(update.message.text)
+    await update.message.reply_text(huification)
+
+    # in theory, that's how premium emojis are going to be sent; for now, there's no support for premium bots
+    # await update.message.reply_text(text="😀", entities=[MessageEntity(type=constants.MessageEntityType.CUSTOM_EMOJI, offset=0, length=2, custom_emoji_id=5456128055414103034)])
 
 
 def main() -> None:

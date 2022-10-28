@@ -12,16 +12,16 @@ def Huify(text: str):
 # we need those variables for huification logic
 CONSONANTS = "бвгджзклмнпрстфхцчшщ"
 EQUENC = {
-  "а": "я",
-  "е": "е",
-  "ё": "ё",
-  "и": "и",
-  "о": "е",
-  "у": "ю",
-  "э": "е",
-  "ю": "ю",
-  "я": "я",
-  "ы": "и"
+    "а": "я",
+    "е": "е",
+    "ё": "ё",
+    "и": "и",
+    "о": "е",
+    "у": "ю",
+    "э": "е",
+    "ю": "ю",
+    "я": "я",
+    "ы": "и"
 }
 
 
@@ -47,7 +47,7 @@ def huify(text: str):
         if len(word) == 1:
             result += word_original + " "
             continue
-        
+
         result += "ху" + EQUENC[word[0]] + word[1:-1] + " "
 
     return result
