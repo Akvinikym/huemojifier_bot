@@ -67,7 +67,7 @@ sos==4.4
 ssh-import-id==5.11
 systemd-python==234
 tornado==6.2
-Twisted==22.1.0
+Twisted==22.10.0
 tzdata==2022.5
 tzlocal==4.2
 ubuntu-advantage-tools==27.11.2
