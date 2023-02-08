@@ -14,7 +14,7 @@ colorama==0.4.4
 command-not-found==0.3
 configobj==5.0.6
 constantly==15.1.0
-cryptography==3.4.8
+cryptography==39.0.1
 dbus-python==1.2.18
 distro==1.7.0
 distro-info===1.1build1
