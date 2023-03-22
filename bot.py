@@ -1,12 +1,8 @@
-#!/usr/bin/env python
-# pylint: disable=unused-argument, wrong-import-position
-# This program is dedicated to the public domain under the CC0 license.
-
-
 import logging
 from utils.huificator import Huify
 from utils.emojificator import Emojify
-from telegram import Update, MessageEntity, constants
+from utils.tiktok import download_tiktok_video
+from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 
@@ -32,8 +28,18 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Process user message."""
-    huification = Huify(update.message.text)
-    await update.message.reply_text(huification)
+    text = update.message.text
+    if text.find('http') == -1:
+        huification = Huify(update.message.text)
+        await update.message.reply_text(huification)
+        return
+
+    try:
+        file_bytes = download_tiktok_video(update.message.text)
+        await update.message.reply_video(file_bytes)
+    except Exception as e:
+        logger.error(f'Could not download video: {e}')
+        await update.message.reply_text("Could not download video")
 
     # in theory, that's how premium emojis are going to be sent; for now, there's no support for premium bots
     # await update.message.reply_text(text="😀", entities=[MessageEntity(type=constants.MessageEntityType.CUSTOM_EMOJI, offset=0, length=2, custom_emoji_id=5456128055414103034)])
@@ -52,7 +58,8 @@ def main() -> None:
     application.add_handler(CommandHandler("help", help_command))
 
     # on non command i.e message - echo the message on Telegram
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    application.add_handler(MessageHandler(
+        filters.TEXT & ~filters.COMMAND, echo))
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling()
