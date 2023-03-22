@@ -2,6 +2,7 @@ import logging
 from utils.huificator import Huify
 from utils.emojificator import Emojify
 from utils.tiktok import download_tiktok_video
+from utils.instagram import download_instagram_video
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
@@ -29,18 +30,22 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Process user message."""
     text = update.message.text
-    if text.find('http') == -1:
-        huification = Huify(update.message.text)
-        await update.message.reply_text(huification)
-        return
-
     try:
-        file_bytes = download_tiktok_video(update.message.text)
-        await update.message.reply_video(file_bytes)
+        if text.find('tiktok') != -1:
+            file_bytes = download_tiktok_video(update.message.text)
+            await update.message.reply_video(file_bytes)
+            return
+        if text.find('instagram') != -1:
+            file_bytes = download_instagram_video(update.message.text)
+            await update.message.reply_video(file_bytes)
+            return
     except Exception as e:
         logger.error(f'Could not download video: {e}')
         await update.message.reply_text("Could not download video")
+        return
 
+    huification = Huify(update.message.text)
+    await update.message.reply_text(huification)
     # in theory, that's how premium emojis are going to be sent; for now, there's no support for premium bots
     # await update.message.reply_text(text="😀", entities=[MessageEntity(type=constants.MessageEntityType.CUSTOM_EMOJI, offset=0, length=2, custom_emoji_id=5456128055414103034)])
 

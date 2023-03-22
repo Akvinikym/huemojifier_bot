@@ -18,14 +18,5 @@ def download_tiktok_video(video_link):
     }
     conn.request("GET", f'/?url={video_link}', headers=headers)
     link = json.loads(conn.getresponse().read())['data']['play']
-
-    # save
-    directory = str(round(time.time()))
-    filename = str(int(time.time())) + '.mp4'
-    path = f'{directory}/{filename}'
-    try:
-        os.mkdir(directory)
-    except:
-        pass
     with requests.get(link) as r:
         return r.content
