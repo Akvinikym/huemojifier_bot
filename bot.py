@@ -2,7 +2,7 @@ import logging
 from utils.huificator import Huify
 from utils.emojificator import Emojify
 from utils.tiktok import download_tiktok_video
-from utils.instagram import download_instagram_video
+from utils.instagram import download_instagram_media
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
@@ -36,8 +36,12 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_video(file_bytes)
             return
         if text.find('instagram') != -1:
-            file_bytes = download_instagram_video(update.message.text)
-            await update.message.reply_video(file_bytes)
+            is_image, file_bytes = download_instagram_media(
+                update.message.text)
+            if is_image:
+                await update.message.reply_photo(file_bytes)
+            else:
+                await update.message.reply_video(file_bytes)
             return
     except Exception as e:
         logger.error(f'Could not download video: {e}')
