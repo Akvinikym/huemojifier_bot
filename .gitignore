@@ -2,6 +2,7 @@ token.txt
 tiktok.txt
 instagram.txt
 nohup.out
+whitelist.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

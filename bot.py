@@ -7,11 +7,24 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 
-# # Enable logging
+# Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+
+# Expects a whitelist.txt to be a list of whitelisted users' IDs, space separated
+whitelist_ids = []
+
+
+def check_user_id(id):
+    if len(whitelist_ids) == 0:
+        return
+    if str(id) in whitelist_ids:
+        return
+    raise Exception(
+        "You are not in the whitelisted IDs, you cannot download the video :(")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -32,10 +45,14 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text
     try:
         if text.find('tiktok') != -1:
+            check_user_id(update.message.from_user.id)
+
             file_bytes = download_tiktok_video(update.message.text)
             await update.message.reply_video(file_bytes)
             return
         if text.find('instagram') != -1:
+            check_user_id(update.message.from_user.id)
+
             is_image, file_bytes = download_instagram_media(
                 update.message.text)
             if is_image:
@@ -45,7 +62,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
     except Exception as e:
         logger.error(f'Could not download video: {e}')
-        await update.message.reply_text("Could not download video")
+        await update.message.reply_text(f'Could not download video: {e}')
         return
 
     huification = Huify(update.message.text)
@@ -58,6 +75,14 @@ def main() -> None:
     # read token from the file
     with open('token.txt', 'r') as file:
         token = file.read().rstrip()
+
+    global whitelist_ids
+    try:
+        with open('whitelist.txt', 'r') as file:
+            for line in file:
+                whitelist_ids = line.split(' ')
+    except:
+        pass
 
     # create the bot
     application = Application.builder().token(token).build()
