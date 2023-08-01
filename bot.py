@@ -24,7 +24,7 @@ def check_user_id(id):
     if str(id) in whitelist_ids:
         return
     raise Exception(
-        "You are not in the whitelisted IDs, you cannot download the video :(")
+        "You are not in the whitelisted IDs (your ID is {}), you cannot download the video :(".format(id))
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -80,9 +80,10 @@ def main() -> None:
     try:
         with open('whitelist.txt', 'r') as file:
             for line in file:
-                whitelist_ids = line.split(' ')
+                whitelist_ids = [x.strip() for x in line.split(' ')]
     except:
         pass
+    logger.info('Whitelisted IDs: {}'.format(whitelist_ids))
 
     # create the bot
     application = Application.builder().token(token).build()
